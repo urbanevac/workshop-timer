@@ -197,6 +197,17 @@
             font-weight: bold;
             color: #333;
         }
+
+.footer-text {
+    position: absolute;
+    bottom: 1rem;
+    width: 100%;
+    text-align: center;
+    font-size: 0.875rem;
+    color: #333;
+    font-weight: normal;
+}
+
     </style>
 </head>
 <body>
@@ -216,17 +227,23 @@
                     <button id="settingsButton"><i class="fas fa-cog"></i></button>
                 </div>
             </div>
-            <div class="card-back">
-                <div class="back-heading">Choose Length of Activity</div>
-                <div class="preset-grid">
-                    <button class="preset-btn active" data-time="25">25m</button>
-                    <button class="preset-btn" data-time="20">20m</button>
-                    <button class="preset-btn" data-time="15">15m</button>
-                    <button class="preset-btn" data-time="5">5m</button>
-                </div>
-                <input type="number" id="customTime" placeholder="Custom (minutes)" min="1">
-                <button class="back-button" id="backButton">Back to Timer</button>
-            </div>
+           <div class="card-back">
+    <div class="back-heading">Choose Length of Activity</div>
+    <div class="preset-grid">
+        <button class="preset-btn active" data-time="25">25m</button>
+        <button class="preset-btn" data-time="20">20m</button>
+        <button class="preset-btn" data-time="15">15m</button>
+        <button class="preset-btn" data-time="5">5m</button>
+    </div>
+    <input type="number" id="customTime" placeholder="Custom (minutes)" min="1">
+    <button class="back-button" id="backButton">Back to Timer</button>
+    <!-- Added Text Section -->
+    <div class="footer-text">
+        <p>Workshop Timer. Made with ❤️ in Milton Keynes</p>
+</div>
+
+    </div>
+</div>
         </div>
     </div>
 
