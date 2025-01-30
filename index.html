@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro Timer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f3f4f6;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+        }
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+            width: 500px;
+            height: 600px;
+            perspective: 1000px;
+            overflow: hidden;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .card-back {
+            background: #f9f9f9;
+            transform: rotateY(180deg);
+        }
+        .timer-container {
+            position: relative;
+            width: 400px; 
+            height: 400px; 
+            margin: 20px auto 0;
+        }
+        .timer-circle {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+        .timer-circle circle {
+            fill: none;
+            stroke-width: 30; 
+            stroke-linecap: round;
+        }
+        .background-circle {
+            stroke: #e0e0e0;
+        }
+        .progress-circle {
+            stroke: #ef4444;
+            transition: stroke-dashoffset 0.3s ease-out;
+        }
+        .time-display {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 5rem; 
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            width: 100%;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px; 
+            padding-bottom: 20px;
+        }
+        .controls button {
+            padding: 10px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            background: #5A5A5A;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+        }
+        .controls button:hover {
+            background-color: #3e3e3e;
+        }
+        .preset-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+            max-width: 300px;
+            margin-top: 20px;
+        }
+        .preset-btn {
+            padding: 16px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border: none;
+            border-radius: 12px;
+            background: #6200ea;
+            color: white;
+            transition: background 0.3s ease, transform 0.2s ease;
+            width: 100%;
+        }
+        .preset-btn:hover {
+            background: #3700b3;
+            transform: scale(1.05);
+        }
+        .preset-btn.active {
+            background: #03dac6; /* Active button color */
+        }
+        #customTime {
+            padding: 12px;
+            font-size: 1rem;
+            border-radius: 12px;
+            border: 1px solid #ccc;
+            width: 100%;
+            max-width: 300px;
+            margin-top: 20px;
+        }
+        #customTime:focus {
+            border-color: #6200ea;
+            outline: none;
+        }
+        .back-button {
+            margin-top: 20px;
+            padding: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            border: none;
+            border-radius: 12px;
+            background: #5A5A5A;
+            color: white;
+            transition: background 0.3s ease;
+            width: 100%;
+            max-width: 300px;
+        }
+        .back-button:hover {
+            background: #3e3e3e;
+        }
+        .back-heading {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="card-inner">
+            <!-- Front side of the card -->
+            <div class="card-front">
+                <div class="timer-container">
+                    <svg class="timer-circle" viewBox="0 0 400 400">
+                        <circle class="background-circle" cx="200" cy="200" r="180"></circle>
+                        <circle class="progress-circle" cx="200" cy="200" r="180" stroke-dasharray="1130" stroke-dashoffset="1130"></circle>
+                    </svg>
+                    <div class="time-display">25:00</div>
+                </div>
+                <div class="controls">
+                    <button id="startButton"><i class="fas fa-play"></i></button>
+                    <button id="resetButton"><i class="fas fa-redo"></i></button>
+                    <button id="settingsButton"><i class="fas fa-cogs"></i></button>
+                </div>
+            </div>
+            <!-- Back side of the card -->
+            <div class="card-back">
+                <div class="back-heading">Choose Length of Activity</div>
+                <div class="preset-grid">
+                    <button class="preset-btn" data-time="25">25m</button>
+                    <button class="preset-btn" data-time="20">20m</button>
+                    <button class="preset-btn" data-time="15">15m</button>
+                    <button class="preset-btn" data-time="5">5m</button>
+                </div>
+                <input type="number" id="customTime" placeholder="Custom (minutes)" min="1">
+                <button class="back-button" id="backButton">Back to Timer</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (() => {
+            class PomodoroTimer {
+                constructor() {
+                    this.totalSeconds = 25 * 60;
+                    this.remainingSeconds = this.totalSeconds;
+                    this.isRunning = false;
+                    this.interval = null;
+
+                    this.timeDisplay = document.querySelector('.time-display');
+                    this.progressCircle = document.querySelector('.progress-circle');
+                    this.startButton = document.getElementById('startButton');
+                    this.resetButton = document.getElementById('resetButton');
+                    this.presetButtons = document.querySelectorAll('.preset-btn');
+                    this.customTimeInput = document.getElementById('customTime');
+                    this.card = document.querySelector('.card');
+                    this.settingsButton = document.getElementById('settingsButton');
+                    this.backButton = document.getElementById('backButton');
+
+                    this.startButton.addEventListener('click', () => this.toggleTimer());
+                    this.resetButton.addEventListener('click', () => this.reset());
+                    this.presetButtons.forEach(button => button.addEventListener('click', (e) => this.setTime(e.target.dataset.time, e.target)));
+                    this.customTimeInput.addEventListener('change', () => {
+                        const minutes = parseInt(this.customTimeInput.value);
+                        if (minutes > 0) this.setTime(minutes);
+                    });
+
+                    this.settingsButton.addEventListener('click', () => this.toggleCardFlip());
+                    this.backButton.addEventListener('click', () => this.toggleCardFlip());
+
+                    this.updateDisplay();
+                }
+
+                toggleTimer() {
+                    if (this.isRunning) {
+                        clearInterval(this.interval);
+                        this.startButton.innerHTML = '<i class="fas fa-play"></i>';
+                    } else {
+                        this.interval = setInterval(() => this.tick(), 1000);
+                        this.startButton.innerHTML = '<i class="fas fa-pause"></i>';
+                    }
+                    this.isRunning = !this.isRunning;
+                }
+
+                tick() {
+                    if (this.remainingSeconds > 0) {
+                        this.remainingSeconds--;
+                        this.updateDisplay();
+                    } else {
+                        clearInterval(this.interval);
+                        this.isRunning = false;
+                        this.startButton.innerHTML = '<i class="fas fa-play"></i>';
+                    }
+                }
+
+                reset() {
+                    clearInterval(this.interval);
+                    this.isRunning = false;
+                    this.remainingSeconds = this.totalSeconds;
+                    this.updateDisplay();
+                    this.startButton.innerHTML = '<i class="fas fa-play"></i>';
+                }
+
+                setTime(minutes, button) {
+                    this.totalSeconds = minutes * 60;
+                    this.remainingSeconds = this.totalSeconds;
+                    this.updateDisplay();
+                    
+                    // Remove active class from all buttons
+                    this.presetButtons.forEach(btn => btn.classList.remove('active'));
+                    // Add active class to the selected button
+                    button.classList.add('active');
+                }
+
+                updateDisplay() {
+                    const minutes = Math.floor(this.remainingSeconds / 60);
+                    const seconds = this.remainingSeconds % 60;
+                    this.timeDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+                    const progress = (this.remainingSeconds / this.totalSeconds) * 1130;
+                    this.progressCircle.style.strokeDashoffset = progress;
+                }
+
+                toggleCardFlip() {
+                    this.card.classList.toggle('flipped');
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                new PomodoroTimer();
+            });
+        })();
+    </script>
+</body>
+</html>
